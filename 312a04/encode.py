@@ -1,60 +1,66 @@
 import heapq
 
+givenstring = " ,.0123456789abcdefghijklmnopqrstuvwxyz"
+tab = {}
 
-version = 0
-encodableChar = " ,.0123456789abcdefghijklmnopqrstuvwxyz"
-freqTable = {}
-for char in encodableChar:
-    freqTable[char] = 0
+for char in givenstring:
+    tab[char] = 0
 with open('test1.txt', 'r') as fileinput:
     for line in fileinput:
         line = line.lower()
         for char in line:
             if char.isspace():
-                freqTable[" "] += 1
+                tab[" "] += 1
             elif char.isalnum() or char == "." or char ==",":
-                freqTable[char] += 1
+                tab[char] += 1
+
 f = open("frequency.txt", "w")
-for key in freqTable:
+for key in tab:
     if key == "z":
-        f.write(key+":"+str(freqTable[key]))
+        f.write(key+":"+str(tab[key]))
     else:
-        f.write(key+":"+str(freqTable[key])+"\n")
+        f.write(key+":"+str(tab[key])+"\n")
 f.close()
 
 
 class NodeTree():
-    def __init__(self, char, left=None, right=None):
-        global version
-        self.version = version
-        version+=1
-        self.left = left
+
+    def __init__(self, left=None, right=None):
         self.right = right
-        self.char = char
-    def __lt__(self,other):
-        return self.version < other.version
-        
-keys = []
-for key in freqTable:
-    # if freqTable[key] != 0:
-    keys.append((freqTable[key],NodeTree(key)))
-heapq.heapify(keys)
-# x = heapq.heappop(keys)
-# x2 = heapq.heappop(keys)
-# print(x[0]+x2[0])
-while len(keys) != 1:
-    x = heapq.heappop(keys)
-    x2 = heapq.heappop(keys)
-    heapq.heappush(keys,(x[0]+x2[0],NodeTree(None,x[1],x2[1])))
-res = []
-def dfs(tree):
-    if tree.char !=  None:
-        print(tree.char+":"+"".join(res))
+        self.left = left
+
+def huffman_code_tree(node, left=True, binString=''):
+    if type(node) is str:
+        return {node: binString}
+    dictionary = dict()
+    l = node.left
+    r = node.right 
+    huff = huffman_code_tree(l, True, binString + '1')
+    dictionary.update(huff)
+    huff = huffman_code_tree(r, False, binString + '0')
+    dictionary.update(huff)
+    return dictionary
+
+
+freq = sorted(tab.items(), key=lambda x: x[1], reverse=True)
+link = freq
+
+while len(link) > 1:
+    key1, c1 = link[-1]
+    key2, c2 = link[-2]
+    link = link[:-2]
+    node = NodeTree(key1, key2)
+    link.append((node, c1 + c2))
+
+    link = sorted(link, key=lambda x: x[1], reverse=True)
+
+huffmanCode = huffman_code_tree(link[0][0])
+
+f = open("codes.txt", "w")
+for (char, frequency) in freq:
+    if char == freq[-1][0]:
+        f.write(char + ":" + huffmanCode[char])
     else:
-        res.append("0")
-        dfs(tree.left)
-        res.pop()
-        res.append("1")
-        dfs(tree.right)
-        res.pop()
-dfs(keys[0][1])
+        f.write(char + ":" + huffmanCode[char] + '\n')
+
+f.close()
