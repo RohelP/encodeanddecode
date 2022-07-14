@@ -51,7 +51,7 @@ def huffman_code_tree(node, left=True, binString=''):
     
     return dictionary
 
-
+'''https://www.programiz.com/dsa/huffman-coding'''
 freq = sorted(tab.items(), key=lambda x: x[1], reverse=True)
 link = freq
 
