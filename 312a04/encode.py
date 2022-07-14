@@ -1,19 +1,17 @@
-import heapq
-
 givenstring = " ,.0123456789abcdefghijklmnopqrstuvwxyz"
 tab = {}
-encrypt = []
+arr = []
 
-for char in givenstring:
-    tab[char] = 0
+for num in givenstring:
+    tab[num] = 0
 with open('test1.txt', 'r') as fileinput:
-    for line in fileinput:
-        line = line.lower()
-        for char in line:
-            if char.isspace():
+    for x in fileinput:
+        x = x.lower()
+        for num in x:
+            if num.isspace():
                 tab[" "] += 1
-            elif char.isalnum() or char == "." or char ==",":
-                tab[char] += 1
+            elif num.isalnum() or num == "." or num ==",":
+                tab[num] += 1
 
 f = open("frequency.txt", "w")
 for key in tab:
@@ -58,23 +56,26 @@ while len(link) > 1:
 huffmanCode = huffman_code_tree(link[0][0])
 
 f = open("codes.txt", "w")
-for (char, frequency) in freq:
-    if char == freq[-1][0]:
-        f.write(char + ":" + huffmanCode[char])
+for (num, frequency) in freq:
+    if num == freq[-1][0]:
+        f.write(num + ":" + huffmanCode[num])
     else:
-        f.write(char + ":" + huffmanCode[char] + '\n')
+        f.write(num + ":" + huffmanCode[num] + '\n')
 
 f.close()
 
 
 decode = open("compressed.bin", "wb")
 with open('test1.txt', 'r') as fileinput:
-    for line in fileinput:
-        line = line.lower()
-        for char in line:
-            if char in huffmanCode:
-                encrypt+=huffmanCode[char]
-b="".join(map(str,encrypt))
-y = bytearray(int(b[x:x+8], 2) for x in range(0, len(b), 8))
+    for x in fileinput:
+        x = x.lower()
+        for num in x:
+            if num in huffmanCode:
+                arr+=huffmanCode[num]
+        
+
+b="".join(map(str,arr))
+y = bytearray(int(b[x:x+8], 2) 
+for x in range(0, len(b), 8))
 decode.write(y)
 decode.close()
