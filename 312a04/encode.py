@@ -2,6 +2,7 @@ import heapq
 
 givenstring = " ,.0123456789abcdefghijklmnopqrstuvwxyz"
 tab = {}
+encrypt = []
 
 for char in givenstring:
     tab[char] = 0
@@ -64,3 +65,16 @@ for (char, frequency) in freq:
         f.write(char + ":" + huffmanCode[char] + '\n')
 
 f.close()
+
+
+decode = open("compressed.bin", "wb")
+with open('test1.txt', 'r') as fileinput:
+    for line in fileinput:
+        line = line.lower()
+        for char in line:
+            if char in huffmanCode:
+                encrypt+=huffmanCode[char]
+b="".join(map(str,encrypt))
+y = bytearray(int(b[x:x+8], 2) for x in range(0, len(b), 8))
+decode.write(y)
+decode.close()
